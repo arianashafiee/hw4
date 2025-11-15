@@ -1,0 +1,23 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Small Change</title>
+<style>
+  body{font:16px system-ui;margin:40px}
+  #banner{padding:16px;border-radius:8px;background:#eef}
+</style>
+<h1>Dashboard</h1>
+<div id="banner">Status: OK</div>
+<p>Switch away and return to see a small, localized change.</p>
+<script>
+  let armed = false;
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      armed = true;
+    } else if (document.visibilityState === 'visible' && armed) {
+      const b = document.getElementById('banner');
+      b.textContent = 'Status: WARNING';
+      b.style.background = '#fee';
+      armed = false;
+    }
+  }, { passive: true });
+</script>

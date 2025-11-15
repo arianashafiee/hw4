@@ -1,0 +1,11 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Nav While Hidden (1)</title>
+<p>When this tab becomes hidden, it will navigate to page 2.</p>
+<script>
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      setTimeout(() => location.href = './nav-while-hidden-2.html', 500);
+    }
+  }, { passive: true });
+</script>
