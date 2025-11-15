@@ -1,0 +1,25 @@
+// path: manifest.json
+{
+    "manifest_version": 3,
+    "name": "Tabnabbing Watch (MV3)",
+    "version": "1.0.0",
+    "description": "Detects tabnabbing by comparing pre-blur and post-focus screenshots, highlights changes, and badges the toolbar icon.",
+    "action": {
+      "default_title": "Tabnabbing Watch"
+    },
+    "background": {
+      "service_worker": "background/service_worker.js",
+      "type": "module"
+    },
+    "permissions": ["tabs", "storage", "scripting"],
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content/content.js"],
+        "css": ["content/overlay.css"],
+        "run_at": "document_idle"
+      }
+    ],
+    "options_page": "options/options.html"
+  }
+  

@@ -1,0 +1,7 @@
+/* path: content/overlay.css */
+.tabnab-overlay-root { mix-blend-mode: normal; }
+.tabnab-overlay-tile {
+  background: rgba(220, 53, 69, 0.28); /* translucent red */
+  outline: 1px solid rgba(220, 53, 69, 0.45);
+  border-radius: 2px;
+}
