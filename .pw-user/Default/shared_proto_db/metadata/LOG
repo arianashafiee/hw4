@@ -1,2 +1,3 @@
-2025/11/14-20:24:23.283 2ef399 Creating DB /Users/arianashafiee/hw4/.pw-user/Default/shared_proto_db/metadata since it was missing.
-2025/11/14-20:24:23.286 2ef399 Reusing MANIFEST /Users/arianashafiee/hw4/.pw-user/Default/shared_proto_db/metadata/MANIFEST-000001
+2025/11/14-20:33:00.985 2f1ae5 Reusing MANIFEST /Users/arianashafiee/hw4/.pw-user/Default/shared_proto_db/metadata/MANIFEST-000001
+2025/11/14-20:33:00.985 2f1ae5 Recovering log #3
+2025/11/14-20:33:00.986 2f1ae5 Reusing old log /Users/arianashafiee/hw4/.pw-user/Default/shared_proto_db/metadata/000003.log 

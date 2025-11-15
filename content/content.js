@@ -1,10 +1,14 @@
 // path: content/content.js
-document.documentElement.setAttribute('data-tabnab-installed', '1'); // test probe
-
 (() => {
-    let baseShot = null;                // { dataUrl, w, h }
+    // Test probe so E2E can confirm injection.
+    document.documentElement.setAttribute('data-tabnab-installed', '1');
+  
+    let baseShot = null;                // { dataUrl, w, h, img? }
     let overlayId = null;
-    let heartbeat = null;               // interval id
+    let heartbeat = null;
+    const qs = typeof location !== 'undefined' ? location.search : '';
+    const testMode = /\be2e=1\b/.test(qs) || (typeof localStorage !== 'undefined' && localStorage.getItem('TABNAB_E2E') === '1');
+  
     let opts = {
       tileSize: 10,
       stride: 2,
@@ -16,13 +20,22 @@ document.documentElement.setAttribute('data-tabnab-installed', '1'); // test pro
       secondPassDelayMs: 800
     };
   
-    chrome.storage.sync.get(Object.keys(opts), (res) => Object.assign(opts, res || {}));
+    chrome.storage.sync.get(Object.keys(opts), (res) => {
+      Object.assign(opts, res || {});
+      if (testMode) {
+        // Make detections stable/visible in E2E runs.
+        opts.overlayAutoHideMs = 0;
+        opts.visibleCaptureDelayMs = Math.max(opts.visibleCaptureDelayMs, 1000);
+        opts.secondPassDelayMs = Math.max(opts.secondPassDelayMs, 1000);
+      }
+    });
+  
     chrome.storage.onChanged.addListener((changes, area) => {
       if (area !== "sync") return;
       for (const [k, v] of Object.entries(changes)) if (k in opts) opts[k] = v.newValue;
     });
   
-    function log(...a) { /* flip to console.log for verbose */ }
+    const log = (...a) => { if (testMode) console.log('[tabnab]', ...a); };
   
     function msgBadge(percent) {
       try { chrome.runtime.sendMessage({ type: "BADGE", percent }); } catch {}
@@ -150,14 +163,13 @@ document.documentElement.setAttribute('data-tabnab-installed', '1'); // test pro
       const currData = tmpCtx.getImageData(0, 0, w, h);
   
       const { changedTiles, percent } = computeDiff(baseData, currData, opts);
-      log(`[tabnab] ${label}: ${percent.toFixed(1)}% changed (${changedTiles.length} tiles)`);
+      log(`${label}: ${percent.toFixed(1)}% (${changedTiles.length} tiles)`);
       return { percent, changedTiles, curr };
     }
   
     function startHeartbeat() {
       if (heartbeat) return;
-      log("[tabnab] heartbeat start");
-      // First immediate baseline
+      log("heartbeat start");
       capture().then(shot => { if (shot) baseShot = shot; });
       heartbeat = setInterval(async () => {
         const shot = await capture();
@@ -169,18 +181,15 @@ document.documentElement.setAttribute('data-tabnab-installed', '1'); // test pro
       if (heartbeat) {
         clearInterval(heartbeat);
         heartbeat = null;
-        log("[tabnab] heartbeat stop");
+        log("heartbeat stop");
       }
     }
   
     async function onVisible() {
-      // Delay to let page morph after visibilitychange
       await new Promise(r => setTimeout(r, Math.max(0, opts.visibleCaptureDelayMs)));
   
-      // First pass
       let { percent, changedTiles, curr } = await doDiffOnce("pass1");
   
-      // Second pass if small change
       const { warnPercent } = await new Promise(res => chrome.storage.sync.get(["warnPercent"], res));
       if (percent < (warnPercent ?? 2)) {
         await new Promise(r => setTimeout(r, Math.max(0, opts.secondPassDelayMs)));
@@ -191,24 +200,21 @@ document.documentElement.setAttribute('data-tabnab-installed', '1'); // test pro
       drawOverlay(baseShot.w, baseShot.h, changedTiles, opts.tileSize, opts.overlayAutoHideMs);
       msgBadge(percent);
   
-      // Baseline rolls forward to what we just saw
-      if (curr) baseShot = curr;
+      // Signal for E2E: mark & emit event with percent.
+      document.documentElement.setAttribute('data-tabnab-detected', '1');
+      try { window.dispatchEvent(new CustomEvent('tabnab:detection', { detail: { percent } })); } catch {}
   
-      // Resume heartbeat for fresh baselines
+      if (curr) baseShot = curr;
       startHeartbeat();
     }
   
-    function onHidden() {
-      // Stop heartbeat; do NOT attempt capture (background tabs can't be captured)
-      stopHeartbeat();
-    }
+    function onHidden() { stopHeartbeat(); }
   
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "hidden") onHidden();
       else if (document.visibilityState === "visible") onVisible();
     }, { passive: true });
   
-    // Initialize
     if (document.visibilityState === "visible") startHeartbeat();
     else stopHeartbeat();
   })();
