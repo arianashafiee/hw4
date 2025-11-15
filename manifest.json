@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Tabnabbing Watch (MV3)",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Detects tabnabbing by comparing pre-blur and post-focus screenshots, highlights changes, and badges the toolbar icon.",
     "action": {
       "default_title": "Tabnabbing Watch"
@@ -21,4 +21,3 @@
     ],
     "options_page": "options/options.html"
   }
-  

@@ -8,7 +8,7 @@
   <style>
     body { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; }
     h1 { font-size: 18px; margin: 0 0 12px; }
-    .row { display: grid; grid-template-columns: 220px 140px 1fr; align-items: center; gap: 8px; margin: 8px 0; }
+    .row { display: grid; grid-template-columns: 220px 160px 1fr; align-items: center; gap: 8px; margin: 8px 0; }
     input[type=number] { width: 120px; }
     .hint { color: #555; font-size: 12px; }
     .btns { margin-top: 16px; display: flex; gap: 8px; }
@@ -18,47 +18,17 @@
 <body>
   <h1>Tabnabbing Watch – Options</h1>
 
-  <div class="row">
-    <label>Tile size (px)</label>
-    <input id="tileSize" type="number" min="4" max="64" step="1" />
-    <div class="hint">Default 10</div>
-  </div>
+  <div class="row"><label>Tile size (px)</label><input id="tileSize" type="number" min="4" max="64" step="1" /><div class="hint">Default 10</div></div>
+  <div class="row"><label>Sampling stride (px)</label><input id="stride" type="number" min="1" max="8" step="1" /><div class="hint">Default 2</div></div>
+  <div class="row"><label>Pixel delta threshold (0–255)</label><input id="pixelDiffThreshold" type="number" min="1" max="255" step="1" /><div class="hint">Default 20</div></div>
+  <div class="row"><label>Tile change ratio (0–1)</label><input id="tileChangeRatioThreshold" type="number" min="0.05" max="1" step="0.05" /><div class="hint">Default 0.2</div></div>
+  <div class="row"><label>Warn at %</label><input id="warnPercent" type="number" min="0" max="100" step="1" /><div class="hint">Amber badge at/above (default 2)</div></div>
+  <div class="row"><label>Alert at %</label><input id="alertPercent" type="number" min="0" max="100" step="1" /><div class="hint">Red badge at/above (default 10)</div></div>
+  <div class="row"><label>Overlay auto-hide (ms)</label><input id="overlayAutoHideMs" type="number" min="0" max="60000" step="100" /><div class="hint">0 = persist. Default 6000</div></div>
 
-  <div class="row">
-    <label>Sampling stride (px)</label>
-    <input id="stride" type="number" min="1" max="8" step="1" />
-    <div class="hint">Default 2</div>
-  </div>
-
-  <div class="row">
-    <label>Pixel delta threshold (0–255)</label>
-    <input id="pixelDiffThreshold" type="number" min="1" max="255" step="1" />
-    <div class="hint">Average RGB difference to count a pixel as changed. Default 20.</div>
-  </div>
-
-  <div class="row">
-    <label>Tile change ratio (0–1)</label>
-    <input id="tileChangeRatioThreshold" type="number" min="0.05" max="1" step="0.05" />
-    <div class="hint">Fraction of sampled pixels per tile that must differ. Default 0.2.</div>
-  </div>
-
-  <div class="row">
-    <label>Warn at %</label>
-    <input id="warnPercent" type="number" min="0" max="100" step="1" />
-    <div class="hint">Badge turns amber at or above this % (default 2).</div>
-  </div>
-
-  <div class="row">
-    <label>Alert at %</label>
-    <input id="alertPercent" type="number" min="0" max="100" step="1" />
-    <div class="hint">Badge turns red at or above this % (default 10).</div>
-  </div>
-
-  <div class="row">
-    <label>Overlay auto-hide (ms)</label>
-    <input id="overlayAutoHideMs" type="number" min="0" max="60000" step="100" />
-    <div class="hint">0 to persist until next diff. Default 6000.</div>
-  </div>
+  <div class="row"><label>Baseline interval (ms)</label><input id="baselineIntervalMs" type="number" min="400" max="5000" step="100" /><div class="hint">Default 1000</div></div>
+  <div class="row"><label>Visible capture delay (ms)</label><input id="visibleCaptureDelayMs" type="number" min="0" max="3000" step="50" /><div class="hint">Default 500</div></div>
+  <div class="row"><label>Second pass delay (ms)</label><input id="secondPassDelayMs" type="number" min="0" max="3000" step="50" /><div class="hint">Default 800</div></div>
 
   <div class="btns">
     <button id="save">Save</button>
