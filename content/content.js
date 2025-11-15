@@ -1,4 +1,6 @@
 // path: content/content.js
+document.documentElement.setAttribute('data-tabnab-installed', '1'); // test probe
+
 (() => {
     let baseShot = null;                // { dataUrl, w, h }
     let overlayId = null;
